@@ -68,6 +68,7 @@
     <inspection_tool class="ScalaDocParserErrorInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ScalaDocUnclosedTagWithoutParser" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ScalaFileName" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="ScalaPackageName" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ScalaUnnecessaryParentheses" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ScalaUnusedExpression" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ScalaUnusedSymbol" enabled="false" level="WEAK WARNING" enabled_by_default="false" />

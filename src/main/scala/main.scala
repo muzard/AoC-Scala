@@ -1,6 +1,8 @@
+import Day2.*
 
 @main
 def main(): Unit = {
-  println("Hello world!")
+  // program of the day here
+  println(checkAllVectors)
 }
 
