@@ -63,5 +63,19 @@ def checkVector(numVec: Vector[Int]): Boolean =
 def checkAllVectors: Int =
   var safeLines = 0
   for vector <- linesToNumVectors do
-    if checkVector(vector) then safeLines += 1
+    if checkAllVariations(vector) then safeLines += 1
   safeLines
+
+def sliceVector(vector: Vector[Int], removableIndex: Int): Vector[Int] =
+    Vector(vector.slice(0,removableIndex), vector.slice(removableIndex + 1, vector.size)).flatten
+
+def checkAllVariations(numVec: Vector[Int]): Boolean =
+  var oneIsSafe = checkVector(numVec)
+  var i = 0
+
+  while !oneIsSafe && i < numVec.size do
+    if checkVector(sliceVector(numVec, i)) then
+      oneIsSafe = true
+    i += 1
+
+  oneIsSafe
