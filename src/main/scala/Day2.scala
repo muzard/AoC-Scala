@@ -27,41 +27,71 @@ def linesToNumVectors: mutable.Buffer[Vector[Int]] =
     tempBuffer.clear()
 
   numVectors
+def sliceVector(vector: Vector[Int], removableIndex: Int): Vector[Int] =
+    Vector(vector.slice(0,removableIndex), vector.slice(removableIndex + 1, vector.size)).flatten
 
-def isAscending(numVec: Vector[Int]): Boolean =
-  var isInOrder = true
-  var lastNum = 0
-  for num <- numVec do
-    if !(num > lastNum) then
-      isInOrder = false
-    else
-      lastNum = num
-  isInOrder
+def isAscending(numVec: Vector[Int], firstTime: Boolean = true): (Boolean, Vector[Int]) =
+  var isSafe = true
+  var infractionCounter = 0
+  var infractionIndex = 0
+  for i <- 1 until numVec.size do
+    if !(numVec(i) > numVec(i-1)) then
+      isSafe = false
+      infractionCounter += 1
+      infractionIndex = i
+  if !isSafe && infractionCounter == 1 && firstTime then
+    val newVec = sliceVector(numVec, infractionIndex)
+    (isAscending(newVec, false).apply(0), newVec)
+  else
+    (isSafe, numVec)
 
-def isDescending(numVec: Vector[Int]): Boolean =
-  var isInOrder = true
-  var lastNum = numVec.max + 1
-  for num <- numVec do
-    if !(num < lastNum) then
-      isInOrder = false
-      // break here
-    else
-      lastNum = num
-  isInOrder
+def isDescending(numVec: Vector[Int], firstTime: Boolean = true): (Boolean, Vector[Int]) =
+  var isSafe = true
+  var infractionCounter = 0
+  var infractionIndex = 0
+  for i <- 1 until numVec.size do
+    if !(numVec(i) < numVec(i-1)) then
+      isSafe = false
+      infractionCounter += 1
+      infractionIndex = i
+  if !isSafe && infractionCounter == 1 && firstTime then
+    val newVec = sliceVector(numVec, infractionIndex)
+    (isAscending(newVec, false).apply(0), newVec)
+  else
+    (isSafe, numVec)
 
+
+def checkLevels(numVec: Vector[Int], isFirst: Boolean = true): Boolean =
+  var isSafe = true
+  var infractions = 0
+  var infractionIndex = 0
+  for i <- 1 until numVec.size do
+    if Math.abs(numVec(i) - numVec(i - 1)) > 3 then
+      isSafe = false
+      infractions += 1
+      infractionIndex = i
+  if !isSafe && infractions == 1 && isFirst then
+    checkLevels(sliceVector(numVec, infractionIndex), false)
+  else
+    isSafe
 
 def checkVector(numVec: Vector[Int]): Boolean =
   var isSafe = true
 
-  if !(isAscending(numVec) || isDescending(numVec)) then
-    isSafe = false
+  val ascending = isAscending(numVec)
+  val descending = isDescending(numVec)
+
+  if ascending(0) && numVec == ascending(1) then
+    isSafe = checkLevels(numVec, true)
+  else if ascending(0) && numVec != ascending(1) then
+    isSafe = checkLevels(ascending(1), false)
+  else if descending(0) && numVec == descending(1) then
+    isSafe = checkLevels(numVec, true)
+  else if descending(0) && numVec != descending(1) then
+    isSafe = checkLevels(descending(1), false)
   else
-    for i <- 1 until numVec.size do
-      if Math.abs(numVec(i) - numVec(i - 1)) > 3 then isSafe = false
+    isSafe = false
   isSafe
 
 def checkAllVectors: Int =
-  var safeLines = 0
-  for vector <- linesToNumVectors do
-    if checkVector(vector) then safeLines += 1
-  safeLines
+  linesToNumVectors.count(checkVector)
